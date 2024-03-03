@@ -13,15 +13,21 @@ extern "C" {
 }
 
 pub fn save_settings() {
-    unsafe { term_save_settings(); }
+    unsafe {
+        term_save_settings();
+    }
 }
 
 pub fn restore_settings() {
-    unsafe { term_restore_settings(); }
+    unsafe {
+        term_restore_settings();
+    }
 }
 
 pub fn enable_raw_mode() {
-    unsafe { term_enable_raw_mode(); }
+    unsafe {
+        term_enable_raw_mode();
+    }
 }
 
 /*
@@ -59,6 +65,12 @@ pub fn hide_cursor() -> io::Result<()> {
 /// Flushes `stdout`
 pub fn show_cursor() -> io::Result<()> {
     stdout().write_all(b"\x1b[?25h")?;
+    stdout().flush()
+}
+
+/// Flushes `stdout`
+pub fn clear_screen() -> io::Result<()> {
+    stdout().write_all(b"\x1b[2J")?;
     stdout().flush()
 }
 

@@ -1,4 +1,6 @@
-mod term;
+mod render;
+pub mod rules;
+pub mod term;
 
 fn setup() -> std::io::Result<()> {
     term::save_settings();
@@ -18,25 +20,25 @@ extern "C" fn reset() {
 }
 
 fn main() -> std::io::Result<()> {
-    use std::collections::HashSet;
-
     setup()?;
 
     // not called on `SIGINT`, which is given by `^C`.
-    unsafe { libc::atexit(reset); }
-
-    let mut live: HashSet<(u16, u16)> = HashSet::new();
-    live.insert((1, 1));
-    live.insert((1, 5));
-    live.insert((2, 9));
-
-    for &(x, y) in &live {
-        term::move_cursor(x, y)?;
-        print!("a");
-        term::flush()?;
+    unsafe {
+        libc::atexit(reset);
     }
 
+    let mut matrix = rules::Matrix::blank();
+    matrix.insert(4, 4);
+    matrix.insert(4, 6);
+    matrix.insert(5, 5);
+    matrix.insert(5, 6);
+    matrix.insert(6, 5);
+
+    let mut rend = render::Renderer::new();
+
     loop {
+        rend.render(&mut matrix)?;
+
         use std::io::Read;
         let mut byte: [u8; 1] = [0];
         if std::io::stdin().read(&mut byte)? > 0 {
