@@ -39,7 +39,14 @@ fn main() -> std::io::Result<()> {
     let mut rend = render::Renderer::new();
 
     loop {
-        rend.render(&mut matrix)?;
+        let changes = matrix.advance();
+
+        if rend.need_rerender {
+            rend.rerender(&mut matrix)?;
+        }
+        else {
+            rend.render_from_changes(changes)?;
+        }
 
         if term::wait_stdin_ms(100)? {
             let mut byte: [u8; 1] = [0];
