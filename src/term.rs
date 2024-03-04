@@ -1,11 +1,13 @@
 //! Terminal functions using termios bindings and ANSI escape codes
 
+use std::ffi;
 use std::io::{self, stdout, Write};
 
 extern "C" {
     pub fn term_save_settings();
     pub fn term_restore_settings();
     pub fn term_enable_raw_mode();
+    pub fn term_wait_stdin_ms(_: ffi::c_long) -> ffi::c_int;
     /*
     pub fn term_set_nonblocking_io();
     pub fn term_unset_nonblocking_io();
@@ -28,6 +30,23 @@ pub fn enable_raw_mode() {
     unsafe {
         term_enable_raw_mode();
     }
+}
+
+/// Set a `ms` millisecond timeout for input to be given to `stdin`.
+///
+/// returns `Ok(true)` if `stdin` can be read from, `Ok(false)` if timeout reached.
+pub fn wait_stdin_ms(ms: u64) -> io::Result<bool> {
+    let result: ffi::c_int = unsafe { term_wait_stdin_ms(ms as ffi::c_long) };
+
+    if result == -1 {
+        return Err(io::Error::last_os_error());
+    }
+
+    if result == 0 {
+        return Ok(false);
+    }
+
+    return Ok(true);
 }
 
 /*

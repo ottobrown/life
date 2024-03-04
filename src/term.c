@@ -1,7 +1,9 @@
 #include <termios.h>
 #include <unistd.h>
 #include <stdlib.h>
-#include <fcntl.h>
+#include <sys/time.h>
+#include <sys/types.h>
+// #include <fcntl.h>
 
 static struct termios ORIG_TERM;
 
@@ -20,6 +22,21 @@ void term_save_settings() {
 
 void term_restore_settings() {
     tcsetattr(STDOUT_FILENO, TCSAFLUSH, &ORIG_TERM);
+}
+
+/// Set a `ms` millisecond timeout for input to be given to `stdin`.
+///
+/// returns `-1` for error, `0` if timeout reached.
+int term_wait_stdin_ms(long ms) {
+    struct timeval timeout;
+    timeout.tv_sec = ms / 1000;
+    timeout.tv_usec = (ms % 1000) * 1000;
+
+    fd_set readfds;
+    FD_ZERO(&readfds);
+    FD_SET(STDIN_FILENO, &readfds);
+
+    return select(STDIN_FILENO + 1, &readfds, NULL, NULL, &timeout);
 }
 
 /*

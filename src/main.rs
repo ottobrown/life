@@ -1,3 +1,5 @@
+use std::io::Read;
+
 mod render;
 pub mod rules;
 pub mod term;
@@ -39,11 +41,12 @@ fn main() -> std::io::Result<()> {
     loop {
         rend.render(&mut matrix)?;
 
-        use std::io::Read;
-        let mut byte: [u8; 1] = [0];
-        if std::io::stdin().read(&mut byte)? > 0 {
-            if byte[0] == b'q' {
-                std::process::exit(0);
+        if term::wait_stdin_ms(100)? {
+            let mut byte: [u8; 1] = [0];
+            if std::io::stdin().read(&mut byte)? > 0 {
+                if byte[0] == b'q' {
+                    std::process::exit(0);
+                }
             }
         }
     }
