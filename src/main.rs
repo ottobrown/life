@@ -1,8 +1,7 @@
-use std::io::Read;
-
+mod frame;
 mod render;
-pub mod rules;
-pub mod term;
+mod rules;
+mod term;
 
 fn setup() -> std::io::Result<()> {
     term::save_settings();
@@ -38,23 +37,12 @@ fn main() -> std::io::Result<()> {
 
     let mut rend = render::Renderer::new();
 
+    let mut frame_handler = frame::FrameHandler {
+        frame_time: 100,
+        paused: false,
+    };
+
     loop {
-        let changes = matrix.advance();
-
-        if rend.need_rerender {
-            rend.rerender(&mut matrix)?;
-        }
-        else {
-            rend.render_from_changes(changes)?;
-        }
-
-        if term::wait_stdin_ms(100)? {
-            let mut byte: [u8; 1] = [0];
-            if std::io::stdin().read(&mut byte)? > 0 {
-                if byte[0] == b'q' {
-                    std::process::exit(0);
-                }
-            }
-        }
+        frame_handler.advance_frame(&mut matrix, &mut rend)?;
     }
 }
