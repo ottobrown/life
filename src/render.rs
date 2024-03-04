@@ -2,6 +2,7 @@ use std::io::{self};
 
 use crate::rules;
 use crate::term;
+use crate::Signal;
 
 #[derive(Clone, Copy, PartialEq, Debug)]
 pub struct Renderer {
@@ -79,5 +80,28 @@ impl Renderer {
         term::flush()?;
 
         Ok(())
+    }
+
+    pub fn handle_signal(&mut self, s: Signal) {
+        match s {
+            Signal::MoveUp => {
+                self.camera.1 += 1;
+                self.need_rerender = true;
+            },
+            Signal::MoveLeft => {
+                self.camera.0 += 1;
+                self.need_rerender = true;
+            },
+            Signal::MoveRight => {
+                self.camera.0 -= 1;
+                self.need_rerender = true;
+            },
+            Signal::MoveDown => {
+                self.camera.1 -= 1;
+                self.need_rerender = true;
+            },
+
+            _ => unreachable!(),
+        }
     }
 }
