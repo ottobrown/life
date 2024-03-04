@@ -20,6 +20,22 @@ impl FrameHandler {
                 if byte[0] == b' ' {
                     self.paused = !self.paused;
                 }
+                if byte[0] == b'h' {
+                    rend.camera.0 += 1;
+                    rend.need_rerender = true;
+                }
+                if byte[0] == b'j' {
+                    rend.camera.1 -= 1;
+                    rend.need_rerender = true;
+                }
+                if byte[0] == b'k' {
+                    rend.camera.1 += 1;
+                    rend.need_rerender = true;
+                }
+                if byte[0] == b'l' {
+                    rend.camera.0 -= 1;
+                    rend.need_rerender = true;
+                }
             }
         }
 
