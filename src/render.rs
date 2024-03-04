@@ -28,7 +28,7 @@ impl Renderer {
         let screen_x = self.camera.0 + x;
         let screen_y = self.camera.1 + y;
 
-        if (screen_x > 0 && screen_y > 0) {
+        if screen_x > 0 && screen_y > 0 {
             return Some((screen_x as u16, screen_y as u16));
         }
 

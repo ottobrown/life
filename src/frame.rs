@@ -14,36 +14,15 @@ impl FrameHandler {
         if term::wait_stdin_ms(self.frame_time)? {
             let mut byte: [u8; 1] = [0];
             if std::io::stdin().read(&mut byte)? > 0 {
-                if byte[0] == b'q' {
-                    std::process::exit(0);
-                }
-                if byte[0] == b' ' {
-                    self.paused = !self.paused;
-                }
-                if byte[0] == b'h' {
-                    rend.camera.0 += 1;
-                    rend.need_rerender = true;
-                }
-                if byte[0] == b'j' {
-                    rend.camera.1 -= 1;
-                    rend.need_rerender = true;
-                }
-                if byte[0] == b'k' {
-                    rend.camera.1 += 1;
-                    rend.need_rerender = true;
-                }
-                if byte[0] == b'l' {
-                    rend.camera.0 -= 1;
-                    rend.need_rerender = true;
-                }
+                self.handle_input(byte[0], matrix, rend);
             }
         }
 
-        if self.paused {
-            return Ok(());
-        }
-
-        let changes = matrix.advance();
+        let changes = if !self.paused {
+            matrix.advance()
+        } else {
+            vec![]
+        };
 
         if rend.need_rerender {
             rend.rerender(&matrix)?;
@@ -52,5 +31,31 @@ impl FrameHandler {
         }
 
         Ok(())
+    }
+
+    // TODO: refactor into something that doesn't require passing `Matrix` and `Renderer`
+    pub fn handle_input(&mut self, b: u8, _matrix: &mut Matrix, rend: &mut Renderer) {
+        match b {
+            b'q' => std::process::exit(0),
+            b' ' => self.paused = !self.paused,
+            b'h' => {
+                rend.camera.0 += 1;
+                rend.need_rerender = true;
+            }
+            b'j' => {
+                rend.camera.1 -= 1;
+                rend.need_rerender = true;
+            }
+            b'k' => {
+                rend.camera.1 += 1;
+                rend.need_rerender = true;
+            }
+            b'l' => {
+                rend.camera.0 -= 1;
+                rend.need_rerender = true;
+            }
+
+            _ => {}
+        }
     }
 }
