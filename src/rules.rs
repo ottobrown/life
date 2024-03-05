@@ -49,7 +49,7 @@ impl Matrix {
             let neighbors = Self::get_neighbors(*x, *y);
             let dead_neighbors: Vec<&(i16, i16)> = neighbors
                 .iter()
-                .filter(|p| !self.is_alive(p.0, p.1) && !dead_cells_checked.contains(&p))
+                .filter(|p| !self.is_alive(p.0, p.1) && !dead_cells_checked.contains(p))
                 .collect();
 
             for p in dead_neighbors {
@@ -61,6 +61,7 @@ impl Matrix {
         }
 
         self.execute_changes(&changes);
+
         return changes;
     }
 

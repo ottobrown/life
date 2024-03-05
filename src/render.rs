@@ -41,7 +41,7 @@ impl Renderer {
 
     /// Clears the screen and renders each living cell
     pub fn rerender(&mut self, matrix: &rules::Matrix) -> io::Result<()> {
-        if self.need_rerender == false {
+        if !self.need_rerender {
             let err = io::Error::new(io::ErrorKind::Other, "erroneous rerender");
             return Err(err);
         }
@@ -88,19 +88,19 @@ impl Renderer {
             Signal::MoveUp => {
                 self.camera.1 += 1;
                 self.need_rerender = true;
-            },
+            }
             Signal::MoveLeft => {
                 self.camera.0 += 1;
                 self.need_rerender = true;
-            },
+            }
             Signal::MoveRight => {
                 self.camera.0 -= 1;
                 self.need_rerender = true;
-            },
+            }
             Signal::MoveDown => {
                 self.camera.1 -= 1;
                 self.need_rerender = true;
-            },
+            }
 
             _ => unreachable!(),
         }

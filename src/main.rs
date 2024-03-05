@@ -1,13 +1,16 @@
+#![allow(clippy::manual_range_contains)]
+#![allow(clippy::needless_return)]
+
 use std::io::{self, Read};
 
 mod frame;
+mod input;
 mod render;
 mod rules;
 mod term;
-mod input;
 
-pub use input::Signal;
 use input::Destination;
+pub use input::Signal;
 
 fn setup() -> io::Result<()> {
     term::save_settings();
@@ -51,20 +54,17 @@ fn main() -> std::io::Result<()> {
 
     let mut rend = render::Renderer::new();
 
-    let mut frame_handler = frame::FrameHandler {
-        frame_time: 100,
-        paused: false,
-    };
+    let mut frame_handler = frame::FrameHandler::new(100);
 
     loop {
         let can_read = frame_handler.advance_frame()?;
 
         let mut byte: [u8; 1] = [0];
-        if can_read && std::io::stdin().read(&mut byte)? > 0 {
+        if can_read && io::stdin().read(&mut byte)? > 0 {
             let signal = input::handle_input(byte[0]);
 
             match signal.dest() {
-                Destination::Nowhere => {},
+                Destination::Nowhere => {}
                 Destination::Renderer => rend.handle_signal(signal),
                 Destination::FrameHandler => frame_handler.handle_signal(signal),
             }
@@ -78,8 +78,7 @@ fn main() -> std::io::Result<()> {
 
         if rend.need_rerender {
             rend.rerender(&matrix)?;
-        }
-        else {
+        } else {
             rend.render_from_changes(changes)?;
         }
     }
