@@ -8,6 +8,8 @@ extern "C" {
     pub fn term_restore_settings();
     pub fn term_enable_raw_mode();
     pub fn term_wait_stdin_ms(_: ffi::c_long) -> ffi::c_int;
+    pub fn term_get_win_rows() -> ffi::c_ushort;
+    pub fn term_get_win_cols() -> ffi::c_ushort;
     /*
     pub fn term_set_nonblocking_io();
     pub fn term_unset_nonblocking_io();
@@ -47,6 +49,14 @@ pub fn wait_stdin_ms(ms: u64) -> io::Result<bool> {
     }
 
     return Ok(true);
+}
+
+pub fn get_win_rows() -> u16 {
+    (unsafe { term_get_win_rows() }) as u16
+}
+
+pub fn get_win_cols() -> u16 {
+    (unsafe { term_get_win_cols() }) as u16
 }
 
 /*

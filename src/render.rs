@@ -29,11 +29,12 @@ impl Renderer {
         let screen_x = self.camera.0 + x;
         let screen_y = self.camera.1 + y;
 
-        if screen_x > 0 && screen_y > 0 {
+        let term_w = term::get_win_cols() as i16;
+        let term_h = term::get_win_rows() as i16;
+
+        if screen_x > 0 && screen_y > 0 && screen_x <= term_w && screen_y <= term_h {
             return Some((screen_x as u16, screen_y as u16));
         }
-
-        // TODO: also check if coordinates are larger than the width and height of the terminal
 
         None
     }

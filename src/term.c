@@ -3,6 +3,7 @@
 #include <stdlib.h>
 #include <sys/time.h>
 #include <sys/types.h>
+#include <sys/ioctl.h>
 // #include <fcntl.h>
 
 static struct termios ORIG_TERM;
@@ -37,6 +38,20 @@ int term_wait_stdin_ms(long ms) {
     FD_SET(STDIN_FILENO, &readfds);
 
     return select(STDIN_FILENO + 1, &readfds, NULL, NULL, &timeout);
+}
+
+unsigned short term_get_win_rows() {
+    struct winsize ws;
+    ioctl(STDIN_FILENO, TIOCGWINSZ, &ws);
+
+    return ws.ws_row;
+}
+
+unsigned short term_get_win_cols() {
+    struct winsize ws;
+    ioctl(STDIN_FILENO, TIOCGWINSZ, &ws);
+
+    return ws.ws_col;
 }
 
 /*
