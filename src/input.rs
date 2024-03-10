@@ -3,6 +3,7 @@ pub enum Signal {
     NoOp,
     Quit,
     Pause,
+    FrameAdvance,
     MoveUp,
     MoveLeft,
     MoveRight,
@@ -14,7 +15,7 @@ impl Signal {
 
         match self {
             NoOp => Destination::Nowhere,
-            Quit | Pause => Destination::FrameHandler,
+            Quit | Pause | FrameAdvance => Destination::FrameHandler,
             MoveUp | MoveLeft | MoveRight | MoveDown => Destination::Renderer,
         }
     }
@@ -32,6 +33,7 @@ pub fn handle_input(b: u8) -> Signal {
     match b {
         b'q' => Signal::Quit,
         b' ' => Signal::Pause,
+        b'f' => Signal::FrameAdvance,
         b'h' => Signal::MoveLeft,
         b'j' => Signal::MoveDown,
         b'k' => Signal::MoveUp,

@@ -49,10 +49,10 @@ fn main() -> std::io::Result<()> {
     let mut frame_handler = frame::FrameHandler::new(100);
 
     loop {
-        let input_b = frame_handler.advance_frame()?;
+        let frame_info = frame_handler.advance_frame()?;
 
-        if input_b != 0 {
-            let signal = input::handle_input(input_b);
+        if let Some(b) = frame_info.input {
+            let signal = input::handle_input(b);
 
             match signal.dest() {
                 Destination::Nowhere => {}
@@ -61,7 +61,7 @@ fn main() -> std::io::Result<()> {
             }
         }
 
-        let changes = if !frame_handler.paused {
+        let changes = if frame_info.advance_matrix {
             matrix.advance()
         } else {
             vec![]
