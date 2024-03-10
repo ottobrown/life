@@ -1,7 +1,7 @@
 #![allow(clippy::manual_range_contains)]
 #![allow(clippy::needless_return)]
 
-use std::io::{self, Read};
+use std::io::{self};
 
 mod frame;
 mod input;
@@ -57,11 +57,10 @@ fn main() -> std::io::Result<()> {
     let mut frame_handler = frame::FrameHandler::new(100);
 
     loop {
-        let can_read = frame_handler.advance_frame()?;
+        let input_b = frame_handler.advance_frame()?;
 
-        let mut byte: [u8; 1] = [0];
-        if can_read && io::stdin().read(&mut byte)? > 0 {
-            let signal = input::handle_input(byte[0]);
+        if input_b != 0 {
+            let signal = input::handle_input(input_b);
 
             match signal.dest() {
                 Destination::Nowhere => {}
