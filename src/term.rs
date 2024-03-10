@@ -59,16 +59,6 @@ pub fn get_win_cols() -> u16 {
     (unsafe { term_get_win_cols() }) as u16
 }
 
-/*
-pub fn set_nonblocking_io() {
-    unsafe { term_set_nonblocking_io(); }
-}
-
-pub fn unset_nonblocking_io() {
-    unsafe { term_unset_nonblocking_io(); }
-}
-*/
-
 pub fn flush() -> io::Result<()> {
     stdout().flush()
 }

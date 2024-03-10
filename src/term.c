@@ -4,7 +4,6 @@
 #include <sys/time.h>
 #include <sys/types.h>
 #include <sys/ioctl.h>
-// #include <fcntl.h>
 
 static struct termios ORIG_TERM;
 
@@ -53,13 +52,3 @@ unsigned short term_get_win_cols() {
 
     return ws.ws_col;
 }
-
-/*
-void term_set_nonblocking_io() {
-    fcntl(STDIN_FILENO, F_SETFL, fcntl(0, F_GETFL) | O_NONBLOCK);
-}
-
-void term_unset_nonblocking_io() {
-    fcntl(STDIN_FILENO, F_SETFL, fcntl(0, F_GETFL) & ~O_NONBLOCK);
-}
-*/

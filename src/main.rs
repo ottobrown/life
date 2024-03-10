@@ -17,7 +17,6 @@ fn setup() -> io::Result<()> {
     term::goto_alternate_screen()?;
     term::hide_cursor()?;
     term::enable_raw_mode();
-    //term::set_nonblocking_io();
 
     Ok(())
 }
@@ -44,13 +43,6 @@ fn main() -> std::io::Result<()> {
         let y = unsafe { libc::rand() } % 50;
         matrix.insert(x as i16, y as i16);
     }
-    /*
-    matrix.insert(4, 4);
-    matrix.insert(4, 6);
-    matrix.insert(5, 5);
-    matrix.insert(5, 6);
-    matrix.insert(6, 5);
-    */
 
     let mut rend = render::Renderer::new();
 
