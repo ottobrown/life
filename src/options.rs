@@ -43,7 +43,7 @@ impl Options {
                 } else {
                     return Err(OptionParseError::MissingArgument);
                 }
-            } else if tr == "--frame_time" || tr == "--ft" {
+            } else if tr == "--frame-time" || tr == "--ft" {
                 if let Some(nx) = args.next() {
                     if let Ok(ft) = nx.trim().parse::<u64>() {
                         ops.frame_time = ft;
