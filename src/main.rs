@@ -1,10 +1,11 @@
 #![allow(clippy::manual_range_contains)]
 #![allow(clippy::needless_return)]
 
-use std::io::{self};
+use std::{env, io};
 
 mod frame;
 mod input;
+mod options;
 mod render;
 mod rules;
 mod term;
@@ -29,6 +30,18 @@ extern "C" fn reset() {
 }
 
 fn main() -> std::io::Result<()> {
+    let args = env::args();
+    let ops = match options::Options::parse_from_args(args) {
+        Ok(o) => o,
+        Err(e) => {
+            eprintln!("{:?}", e);
+            return Err(io::Error::new(
+                io::ErrorKind::InvalidInput,
+                "failed to parse arguments",
+            ));
+        }
+    };
+
     setup()?;
 
     unsafe {
@@ -44,9 +57,9 @@ fn main() -> std::io::Result<()> {
         matrix.insert(x as i16, y as i16);
     }
 
-    let mut rend = render::Renderer::new();
+    let mut rend = render::Renderer::new(ops.character);
 
-    let mut frame_handler = frame::FrameHandler::new(100);
+    let mut frame_handler = frame::FrameHandler::new(ops.frame_time);
 
     loop {
         let frame_info = frame_handler.advance_frame()?;

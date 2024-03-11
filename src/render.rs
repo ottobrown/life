@@ -15,9 +15,9 @@ pub struct Renderer {
     pub need_rerender: bool,
 }
 impl Renderer {
-    pub fn new() -> Self {
+    pub fn new(live_char: u8) -> Self {
         Self {
-            live_char: b'x',
+            live_char,
             camera: (0, 0),
             need_rerender: true,
         }
