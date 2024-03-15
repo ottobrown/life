@@ -10,10 +10,6 @@ extern "C" {
     pub fn term_wait_stdin_ms(_: ffi::c_long) -> ffi::c_int;
     pub fn term_get_win_rows() -> ffi::c_ushort;
     pub fn term_get_win_cols() -> ffi::c_ushort;
-    /*
-    pub fn term_set_nonblocking_io();
-    pub fn term_unset_nonblocking_io();
-    */
 }
 
 pub fn save_settings() {

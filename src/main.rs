@@ -26,7 +26,6 @@ extern "C" fn reset() {
     let _ = term::show_cursor();
     let _ = term::goto_main_screen();
     term::restore_settings();
-    //term::unset_nonblocking_io();
 }
 
 fn main() -> std::io::Result<()> {

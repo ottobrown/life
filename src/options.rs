@@ -1,3 +1,5 @@
+use std::str::FromStr;
+
 #[derive(Debug)]
 pub enum OptionParseError {
     /// e.g. `--fps abcd` when `--fps` expects an integer.
@@ -33,42 +35,62 @@ impl Options {
         while let Some(s) = args.next() {
             let tr = s.trim();
 
-            if tr == "--fps" {
-                if let Some(nx) = args.next() {
-                    if let Ok(fps) = nx.trim().parse::<u64>() {
-                        ops.frame_time = 1000 / fps;
-                    } else {
-                        return Err(OptionParseError::InvalidArgumentToFlag(nx, s));
+            match tr {
+                "--fps" => {
+                    let next = args.next();
+                    if next.is_none() {
+                        return Err(OptionParseError::MissingArgument);
                     }
-                } else {
-                    return Err(OptionParseError::MissingArgument);
+
+                    let nx = next.unwrap();
+                    let fps: u64 = Self::parse_flag_arg(tr, nx.trim())?;
+
+                    ops.frame_time = 1000 / fps;
                 }
-            } else if tr == "--frame-time" || tr == "--ft" {
-                if let Some(nx) = args.next() {
-                    if let Ok(ft) = nx.trim().parse::<u64>() {
-                        ops.frame_time = ft;
-                    } else {
-                        return Err(OptionParseError::InvalidArgumentToFlag(nx, s));
+                "--frame-time" | "--ft" => {
+                    let next = args.next();
+                    if next.is_none() {
+                        return Err(OptionParseError::MissingArgument);
                     }
-                } else {
-                    return Err(OptionParseError::MissingArgument);
+
+                    let nx = next.unwrap();
+                    let ft: u64 = Self::parse_flag_arg(tr, nx.trim())?;
+
+                    ops.frame_time = ft;
                 }
-            } else if tr == "--char" || tr == "-c" {
-                if let Some(nx) = args.next() {
+                "--char" | "-c" => {
+                    let next = args.next();
+                    if next.is_none() {
+                        return Err(OptionParseError::MissingArgument);
+                    }
+
+                    let nx = next.unwrap();
                     if nx.trim().len() > 1 {
                         return Err(OptionParseError::InvalidArgumentToFlag(nx, s));
                     }
 
                     ops.character = nx.bytes().next().unwrap();
-                } else {
-                    return Err(OptionParseError::MissingArgument);
                 }
-            } else {
-                return Err(OptionParseError::UnexpectedArgument(s));
+                _ => {
+                    return Err(OptionParseError::UnexpectedArgument(s));
+                }
             }
         }
 
         Ok(ops)
+    }
+
+    fn parse_flag_arg<T: FromStr>(flag: &str, arg: &str) -> Result<T, OptionParseError> {
+        let result = arg.parse::<T>();
+
+        if let Ok(t) = result {
+            return Ok(t);
+        }
+
+        return Err(OptionParseError::InvalidArgumentToFlag(
+            arg.into(),
+            flag.into(),
+        ));
     }
 }
 
